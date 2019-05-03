@@ -48,7 +48,7 @@ class HangmanApi(Interface.Base):
     
     def endGame(self):
         self._gameInstance.end()
-        return jsonify({'messge': "Game ended"})
+        return jsonify({'message': "Game ended"})
     
     def startGame(self):
         try:
@@ -64,7 +64,7 @@ class HangmanApi(Interface.Base):
             raise CustomError(self._errorMessage)
             self.clearErrorMessage()
         self._gameInstance.start(usersInput)
-        return jsonify({'messge': "Game started"})
+        return jsonify({'message': "Game started"})
     
     def getGameState(self):
         return jsonify(self.createGameStateDict())
