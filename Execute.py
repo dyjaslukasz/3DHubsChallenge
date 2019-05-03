@@ -10,6 +10,10 @@ import Interface
 
 if __name__ == '__main__':
     
+    """
+    Launch either terminal interface or api server.
+
+    """
     
     import argparse
     

@@ -9,12 +9,47 @@ Created on Tue Apr 30 18:39:37 2019
 import Game
 
 class Base:
+    """
+    Base class for all interfaces of the game (including api).
+
+    """
 
     def __init__(self):
+        """
+        Constructor of Interface Base Class. Creates an instance of game's core.
+    
+        Parameters
+        ----------
+    
+        """
         self._errorMessage = ""
         self._gameInstance = Game.Core()
         
+        
+        
     def validateInput(self, userInput, lengthCondition, messageOnWrongLength, messageOnWrongCharacters, allowWhitespaces=False):
+        """
+        Checks if usersInput meets the requirements of length and type of characters.
+    
+        Parameters
+        ----------
+        userInput: string
+            users guess
+        lengthCondition : lambda
+            condition which needs to be satisfied by len(userInput)
+        messageOnWrongLength: string
+            text added to self._errorMessage if length condition failed
+        messageOnWrongCharacters: string
+            text added to self._errorMessage if characters' type condition failed
+        allowWhitespaces: bool
+            if True then the provided characters can also be whitespaces
+            
+        Returns:
+        ----------
+        bool
+            True if input is correct
+    
+        """        
         if not lengthCondition(len(userInput)):
             self._errorMessage += messageOnWrongLength
             return False
@@ -23,25 +58,71 @@ class Base:
             return False
         return True
     
+    
     def clearErrorMessage(self):
+        """
+        Clears and data stored in self._errorMessage
+    
+        Parameters
+        ----------
+        
+        """   
         self._errorMessage = ""
 
 
 import os
 
+
+
 class Option:
+    """
+    Basically a struct holding a description and an action of elements in menu.
+
+    """
+    
     def __init__(self, description, action):
+        """
+        Constructor of Option struct.
+    
+        Parameters
+        ----------
+    
+        """
         self.description    = description
         self.action         = action
 
+
+
 class InTerminal(Base):
+    """
+    Class which creates game's interface in terminal. Inherits from Interface.Base.
+
+    """    
     
     def __init__(self):
+        """
+        Constructor of InTerminal. Sets the with of display for the current
+        state of the guess.
+    
+        Parameters
+        ----------
+    
+        """
         super(InTerminal, self).__init__()
         self.__widthOfDisplay         = 8
         self.__exit                   = False
         
+        
+        
     def run(self):
+        """
+        Main method of the class, launches the view and is executed as long as 
+        interface is active.
+    
+        Parameters
+        ----------
+    
+        """        
         options = \
         {
          '1': Option("Play",              self.play),
@@ -52,12 +133,34 @@ class InTerminal(Base):
         while not self.__exit:
             self.askForOptions(options)
     
+    
+    
     def end(self):
+        """
+        Enables the condition which terminates the run method and ends game instance.
+    
+        Parameters
+        ----------
+    
+        """
         self._gameInstance.end()
         print("Bye bye")
         self.__exit = True
     
+    
+    
     def askForOptions(self, options):
+        """
+        Creates a querry in terminal asking the user to choose one of the displayed options.
+        Question is repeated until the provided choice indicator is correct.
+        In case of the latter, an action related to the selected entry is executed.
+    
+        Parameters
+        ----------
+        options: dict(string, Option)
+            details of possible menu entries
+    
+        """
         properInput     = False
         while not properInput:
             os.system( 'clear' )
@@ -80,7 +183,15 @@ class InTerminal(Base):
         options[userInput].action()
       
         
+        
     def displayScores(self):
+        """
+        Displays the scores saved by the game.
+    
+        Parameters
+        ----------
+    
+        """
         os.system( 'clear' )
         try:        
             scores = self._gameInstance.getScores()
@@ -99,7 +210,17 @@ class InTerminal(Base):
         print("Press enter to return")
         input()
     
+    
+    
     def play(self):
+        """
+        Asks for user's name. Asks for user gesses until the game is active.
+        Afterwards dispalys the result.
+    
+        Parameters
+        ----------
+    
+        """
         lengthCondition = lambda x: x > 0
         name = self.askForTheInformation(lengthCondition, "Please enter your name: ", displayCurrentState=False, allowWhitespaces=True)
         self._gameInstance.start(name)
@@ -118,7 +239,16 @@ class InTerminal(Base):
         input()
         self._gameInstance.resetVariables()
         
+        
+        
     def showCurrent(self):
+        """
+        Prints a line with current state of the word to guess and the amount of remaining attempts. 
+    
+        Parameters
+        ----------
+    
+        """        
         lengthOfGuess       = len(self._gameInstance.currentGuess)
         emptySpaceInFront   = int((self.__widthOfDisplay-lengthOfGuess)*0.5)
         emptySpaceBehind    = int(self.__widthOfDisplay-lengthOfGuess-emptySpaceInFront)
@@ -135,18 +265,55 @@ class InTerminal(Base):
         print(" | Attempts left: ", self._gameInstance.attemptsLeft)
         print()
         
+        
+        
     def printPreviousErrors(self):
+        """
+        Prints the whole string stored in self._errorMessage. 
+    
+        Parameters
+        ----------
+    
+        """
         if len(self._errorMessage) > 0:
             print(self._errorMessage)
             self.clearErrorMessage()
         
     def printPreviousGuess(self, userInput=None):
+        """
+        Prints the line with the previous guess of the user. 
+    
+        Parameters
+        ----------
+        userInput: string
+            string to display as user's previous guess
+    
+        """
         if not userInput is None:
             if len(userInput) > 8:
                 userInput = userInput[:8]+"..."
             print("Previous guess: ",userInput)
         
+        
+        
     def askForTheInformation(self, lengthCondition, requestMessage, displayCurrentState=True, allowWhitespaces=False): 
+        """
+        Creates a querry in terminal asking the user to provide some information.
+        Question is repeated until the provided data is correct.
+        In case of the latter, the data is returned.
+    
+        Parameters
+        ----------
+        lengthCondition : lambda
+            condition which needs to be satisfied by len(userInput)
+        requestMessage: string
+            a message to display explaining what to enter
+        displayCurrentState: bool
+            display current state line with every repeated question
+        allowWhitespaces: bool
+            if True then the provided characters can also be whitespaces
+    
+        """
         properInput     = False
         userInput       = None
         while not properInput:

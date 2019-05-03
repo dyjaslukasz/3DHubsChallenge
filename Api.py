@@ -13,30 +13,91 @@ from flask import Flask, jsonify, request
 app = Flask("Hangman")
 
 class CustomError(Exception):
+    """
+    Excetipn handling any problem which needs to be reported back via https.
+
+    """
+    
     status_code = 400
 
     def __init__(self, message, status_code=None):
+        """
+        Constructor of CustomError Class.
+    
+        Parameters
+        ----------
+        message: string
+            text returned in json back to the client with the explenation of the problem
+        status_code: int
+            a custom code of the error which should be returned to the client
+    
+        """
         Exception.__init__(self)
         self.message = message
         if status_code is not None:
             self.status_code = status_code
         
+        
+        
     def toDict(self):
+        """
+        Creates a dict representation of the error's mesage.
+    
+        Parameters
+        ----------
+    
+        """
         return {'message' : self.message}
         
+    
+    
 @app.errorhandler(CustomError)
 def handleCustomError(error):
+    """
+    Custom handler of CustomError.
+
+    Parameters
+    ----------
+    error: CustomError
+        exception instance which holds the needed data
+    
+    """
     response = jsonify(error.toDict())
     response.status_code = error.status_code
     return response
 
 
+
 class HangmanApi(Interface.Base):
+    """
+    Class holding the methods used but games flask web api.
+
+    """
     
     def __init__(self):
+        """
+        Constructor of HangmanApi Class.
+    
+        Parameters
+        ----------
+    
+        """
         super(HangmanApi, self).__init__()
     
+    
+    
     def createGameStateDict(self):
+        """
+        Creates a dict representation of the game's state.
+    
+        Parameters
+        ----------
+        
+        Returns
+        dict(string,...)
+            a dict representation of the game's state
+    
+        """
         state = dict()
         state['currentGuess']   = self._gameInstance.currentGuess
         state['attemptsLeft']   = self._gameInstance.attemptsLeft
@@ -46,11 +107,39 @@ class HangmanApi(Interface.Base):
         state['score']          = self._gameInstance.score
         return state
     
+    
+    
     def endGame(self):
+        """
+        Ends the game, but does not delete its instance.
+    
+        Parameters
+        ----------
+        
+        Returns
+        json
+            a jasonified message for the client
+    
+        """
         self._gameInstance.end()
         return jsonify({'message': "Game ended"})
     
+    
+    
     def startGame(self):
+        """
+        Checks if the data from the client with user's name is proper and (re)starts the game.
+        
+        Rsises CustomError.
+    
+        Parameters
+        ----------
+        
+        Returns
+        json
+            a jasonified message for the client
+    
+        """
         try:
             jsonData = request.get_json(force=True)
         except:
@@ -66,10 +155,38 @@ class HangmanApi(Interface.Base):
         self._gameInstance.start(usersInput)
         return jsonify({'message': "Game started"})
     
+    
+    
     def getGameState(self):
+        """
+        Provides json with the current state of the game.
+    
+        Parameters
+        ----------
+        
+        Returns
+        json
+            a jasonified state of the game
+    
+        """
         return jsonify(self.createGameStateDict())
 
+
+
     def tryCharacter(self):
+        """
+        Checks if the data from the client with user's guess is proper and forewards it to the game.
+        
+        Rsises CustomError.
+    
+        Parameters
+        ----------
+        
+        Returns
+        json
+            a jasonified bool which is True if the guess was correct
+    
+        """
         if not self._gameInstance.active:
             raise CustomError('Game is not active. (Re)start', status_code=412)
         try:
@@ -88,13 +205,28 @@ class HangmanApi(Interface.Base):
         succesfullAttempt = self._gameInstance.handleNewCharacter(usersInput)
         return jsonify({'successfullAttempt': succesfullAttempt})
     
+    
+    
     def getScores(self):
+        """
+        Provides json with all the scores saved by the game.
+    
+        Parameters
+        ----------
+        
+        Returns
+        json
+            a jasonified scores saved by the game
+    
+        """
         try:        
             scores = self._gameInstance.getScores()
         except Game.ScoreDataProblem:
             raise CustomError("Problem with score data handling", status_code=500)
         return jsonify(scores)
     
+    
+#bind methods to flask requests
 InstanceOfApi = HangmanApi()
 
 app.add_url_rule('/hangman/api/endGame',      view_func=InstanceOfApi.endGame,      methods=['GET'])
