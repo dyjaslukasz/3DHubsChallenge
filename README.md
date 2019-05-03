@@ -3,8 +3,8 @@
 A simple game of hangman with in-terminal user interface and flask-based web API.
 Created as the solution to 3DHubs Challenge.
 
-It was supposed to take approximatelly 4 hours to create this application. However since the implementaion of the web API is a totally new thing to me, I decided to take this opportunity to learn and try it out.
-As the result, the developement took me way more than 4 hours. Since the time limit was violated any way, I decided to add a documentation and a bot which always wins the game using the web API. The latter one for fun.
+It was supposed to take approximatelly 4 hours to create this application. However, since the implementaion of the web API is a totally new thing to me, I decided to take this opportunity to learn and try it out.
+As the result, the developement took me way more than 4 hours. Since the time limit was violated any way, I decided to add a documentation and a bot which always wins the game and comunicates using the web API. The latter one I did for fun.
 
 
 ### Prerequisites
