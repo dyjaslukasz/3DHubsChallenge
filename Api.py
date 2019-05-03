@@ -70,7 +70,7 @@ def handleCustomError(error):
 
 class HangmanApi(Interface.Base):
     """
-    Class holding the methods used but games flask web api.
+    Class holding the methods used by game's flask web api.
 
     """
     

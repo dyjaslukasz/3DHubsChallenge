@@ -47,7 +47,9 @@ class ScoreDataProblem(Exception):
 
 class Core:
     """
-    The logic part of the game
+    The logic part of the game.
+    The score is calculated when the outcome of the game is known using the formula:
+        remainingAttempts/5*50 + (totalSizeOfTheWordToGuess - numberOfUnguessedCharacters)totalSizeOfTheWordToGuess*50
 
     """
     

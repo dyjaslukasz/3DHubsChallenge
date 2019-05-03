@@ -279,6 +279,8 @@ class InTerminal(Base):
             print(self._errorMessage)
             self.clearErrorMessage()
         
+        
+        
     def printPreviousGuess(self, userInput=None):
         """
         Prints the line with the previous guess of the user. 
